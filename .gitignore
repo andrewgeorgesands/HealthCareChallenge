@@ -1,0 +1,45 @@
+## [Visual Studio]
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Vv][Ss][Ll][Oo][Gg]/
+
+## Rider
+.idea/
+*.sln.iml
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## User Secrets
+secrets.json
+
+## AppSettings
+# It's common to ignore appsettings.json if it contains secrets, 
+# but often it contains non-sensitive defaults.
+# If you want to be extra safe, ignore it.
+# appsettings.json
+
+## Sensitive config files
+appsettings.Development.json
+appsettings.json
+# appsettings.Production.json
+
+## Azure deployment parameters (if they contain secrets)
+azuredeploy.parameters.json
+
+## End of .gitignore
