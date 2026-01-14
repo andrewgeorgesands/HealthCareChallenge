@@ -24,7 +24,9 @@ builder.Services.AddAuthentication(options =>
     .AddOpenIdConnect(options =>
     {
         options.Authority = builder.Configuration["VismaConnect:Authority"];
+        // get the client id from Andrew Sands (email : andrew.sands@visma.com or phone 96239993) and add it to developer secrets to run locally
         options.ClientId = builder.Configuration["VismaConnect:ClientId"];
+        // get the client secret from Andrew Sands (email : andrew.sands@visma.com or phone 96239993) and add it to developer secrets to run locally
         options.ClientSecret = builder.Configuration["VismaConnect:ClientSecret"];
 
         if (string.IsNullOrEmpty(options.ClientId) || string.IsNullOrEmpty(options.Authority) || string.IsNullOrEmpty(options.ClientSecret))

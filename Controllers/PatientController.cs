@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthCareChallenge.Controllers;
 
+// looks like this functionality is not under authorization, I wonder if I can access it without login
 public class PatientController(AppDbContext context, ILogger<PatientController> logger) : Controller
 {
     // GET: Patient/Vitals/5
@@ -11,8 +12,8 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         var patient = context.Patients.Find(id);
         if (patient == null) return NotFound();
 
-        logger.LogInformation(
-            $"Accessing record for: {patient.FirstName} {patient.LastName}, SSN: {patient.SocialSecurityNumber}");
+        // we should never log personal identifiable data to the logs.  If logging is necessary, the we must use a different unique identifier such as patient id.
+        logger.LogInformation("Accessing record for: {PatientFirstName} {PatientLastName}, SSN: {PatientSocialSecurityNumber}", patient.FirstName, patient.LastName, patient.SocialSecurityNumber);
 
         var riskScore = 0;
         var status = "Stable";
@@ -40,6 +41,8 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
     {
         var meds = context.Inventory.Find(inventoryId);
 
+        // need to fix this race condition.  If two doctors (or just two tabs) call the API at the same time, then
+        // the quantity in stock will not update properly and cause inventory to be wrong.
         if (meds is { QuantityInStock: > 0 })
         {
             // Simulate a network delay in medication delivery
