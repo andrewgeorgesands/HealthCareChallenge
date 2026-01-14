@@ -27,3 +27,4 @@ public class InventoryController(AppDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 }
+
