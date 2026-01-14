@@ -11,9 +11,13 @@ namespace HealthCareChallenge.Controllers;
 [Authorize]
 public class HomeController(AppDbContext context, ILogger<HomeController> logger) : Controller
 {
+    [AllowAnonymous]
     public IActionResult Index()
     {
-        var patients = context.Patients.ToList();
+        var patients = User.Identity?.IsAuthenticated == true 
+            ? context.Patients.ToList() 
+            : [];
+            
         return View(patients);
     }
 
