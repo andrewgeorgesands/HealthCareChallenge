@@ -1,12 +1,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
+using HealthCareChallenge.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Using In-Memory DB for easy setup/portability in a coding challenge
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("HealthcareTestDb"));
+
 
 builder.Services.AddAuthentication(options =>
     {
@@ -42,6 +49,7 @@ builder.Services.AddAuthentication(options =>
 
         if (builder.Environment.IsDevelopment())
         {
+            // temp code to allow proxying with Burp Suite.  Remember to remove this before committing.
             var proxyUrl = builder.Configuration["VismaConnect:ProxyUrl"];
             if (!string.IsNullOrEmpty(proxyUrl))
             {
@@ -56,6 +64,12 @@ builder.Services.AddAuthentication(options =>
     });
 
 var app = builder.Build();
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

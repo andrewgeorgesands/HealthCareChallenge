@@ -4,21 +4,17 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using HealthCareChallenge.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HealthCareChallenge.Controllers;
 
-public class HomeController : Controller
+[Authorize]
+public class HomeController(AppDbContext context, ILogger<HomeController> logger) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     public IActionResult Index()
     {
-        return View();
+        var patients = context.Patients.ToList();
+        return View(patients);
     }
 
     public IActionResult Privacy()

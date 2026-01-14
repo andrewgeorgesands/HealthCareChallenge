@@ -1,0 +1,84 @@
+@model Patient
+
+@{
+    ViewData["Title"] = "Patient Vitals";
+}
+
+<div class="container mt-4">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3>Patient Record: @Model.FirstName @Model.LastName</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Patient ID:</strong> @Model.Id</p>
+            <p class="text-danger"><strong>SSN:</strong> @Model.SocialSecurityNumber</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h4>Current Vitals</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Heart Rate: <strong>@Model.HeartRate bpm</strong></li>
+                    <li class="list-group-item">Systolic BP: <strong>@Model.SystolicBP mmHg</strong></li>
+                    <li class="list-group-item">Temp: <strong>@Model.Temperature °C</strong></li>
+                </ul>
+                <div class="card-footer">
+                    <h5>Calculated Status:</h5>
+                    <h4 class="@(ViewBag.RiskScore >= 5 ? "text-danger" : "text-warning")">
+                        @ViewBag.RiskStatus (Score: @ViewBag.RiskScore)
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white">
+                    <h4>Emergency Meds</h4>
+                </div>
+                <div class="card-body text-center">
+                    @if (ViewBag.Inventory != null && ((IEnumerable<MedicationInventory>)ViewBag.Inventory).Any())
+                    {
+                        foreach (var item in (IEnumerable<MedicationInventory>)ViewBag.Inventory)
+                        {
+                            <div class="mb-3">
+                                <p>Drug: <strong>@item.DrugName</strong></p>
+                                <p>Current Inventory: <strong>@item.QuantityInStock units</strong></p>
+                                
+                                <form asp-action="DispenseMedication" method="post">
+                                    <input type="hidden" name="patientId" value="@Model.Id" />
+                                    <input type="hidden" name="inventoryId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-lg btn-danger" @(item.QuantityInStock <= 0 ? "disabled" : "")>
+                                        DISPENSE SINGLE DOSE
+                                    </button>
+                                </form>
+                            </div>
+                            <hr />
+                        }
+                    }
+                    else
+                    {
+                        <p>No medications available in inventory.</p>
+                    }
+                    
+                    <small class="text-muted d-block mt-2">
+                        *Simulates 2s network latency on click
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
