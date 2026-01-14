@@ -19,7 +19,7 @@ public class HomeController(AppDbContext context, ILogger<HomeController> logger
             : [];
             
         return View(patients);
-    }
+    } 
 
     public IActionResult Privacy()
     {
