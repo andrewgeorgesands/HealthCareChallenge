@@ -41,9 +41,6 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
 
         if (meds is { QuantityInStock: > 0 })
         {
-            // Simulate a network delay in medication delivery
-            Thread.Sleep(2000);
-
             meds.QuantityInStock--;
             context.SaveChanges();
 
