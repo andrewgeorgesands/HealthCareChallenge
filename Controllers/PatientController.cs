@@ -142,3 +142,4 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         return View(history);
     }
 }
+

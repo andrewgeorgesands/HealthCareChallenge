@@ -28,3 +28,4 @@ public class InventoryController(AppDbContext context) : Controller
     }
 }
 
+

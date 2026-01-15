@@ -6,3 +6,4 @@ public class PatientRisk
     public string RiskStatus { get; set; }
     public int RiskScore { get; set; }
 }
+

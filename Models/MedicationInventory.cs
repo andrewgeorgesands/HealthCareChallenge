@@ -7,3 +7,4 @@ public class MedicationInventory
         
     public int QuantityInStock { get; set; } 
 }
+

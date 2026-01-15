@@ -68,3 +68,4 @@ public class HomeController(AppDbContext context, ILogger<HomeController> logger
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
+

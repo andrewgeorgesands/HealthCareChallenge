@@ -7,3 +7,4 @@ public class DispensedMedication
     public int InventoryId { get; set; }
     public DateTime DispensedAt { get; set; }
 }
+

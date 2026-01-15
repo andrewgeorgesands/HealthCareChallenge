@@ -19,3 +19,4 @@ The production environment is https://vismaflythealthcarechallenge.azurewebsites
 
 # Artifacts
 1. Make your code changes as a pull request so we can review it
+
