@@ -10,4 +10,7 @@ public class Patient
     
     public int VitalsId { get; set; }
     public Vitals Vitals { get; set; }
+
+    public int? PatientRiskId { get; set; }
+    public PatientRisk PatientRisk { get; set; }
 }

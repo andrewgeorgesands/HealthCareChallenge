@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Vitals> Vitals { get; set; }
     public DbSet<MedicationInventory> Inventory { get; set; }
     public DbSet<DispensedMedication> DispensedMedications { get; set; }
+    public DbSet<PatientRisk> PatientRisks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -16,14 +17,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Patient>()
+            .HasOne(p => p.PatientRisk)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PatientRisk>().HasData(
+            new PatientRisk { Id = 1, RiskScore = 4, RiskStatus = "Warning - Monitor Closely" },
+            new PatientRisk { Id = 2, RiskScore = 0, RiskStatus = "Stable" }
+        );
+
         modelBuilder.Entity<Vitals>().HasData(
             new Vitals { Id = 1, HeartRate = 110, SystolicBP = 140, Temperature = 39.5 },
             new Vitals { Id = 2, HeartRate = 70, SystolicBP = 120, Temperature = 36.6 }
         );
 
         modelBuilder.Entity<Patient>().HasData(
-            new { Id = 1, FirstName = "John", LastName = "Doe", SocialSecurityNumber = "123-45-6789", VitalsId = 1 },
-            new { Id = 2, FirstName = "Jane", LastName = "Smith", SocialSecurityNumber = "987-65-4321", VitalsId = 2 }
+            new { Id = 1, FirstName = "John", LastName = "Doe", SocialSecurityNumber = "123-45-6789", VitalsId = 1, PatientRiskId = 1 },
+            new { Id = 2, FirstName = "Jane", LastName = "Smith", SocialSecurityNumber = "987-65-4321", VitalsId = 2, PatientRiskId = 2 }
         );
 
         modelBuilder.Entity<MedicationInventory>().HasData(

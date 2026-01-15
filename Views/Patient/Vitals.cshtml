@@ -37,9 +37,16 @@
                 </ul>
                 <div class="card-footer">
                     <h5>Calculated Status:</h5>
-                    <h4 class="@(ViewBag.RiskScore >= 5 ? "text-danger" : "text-warning")">
-                        @ViewBag.RiskStatus (Score: @ViewBag.RiskScore)
-                    </h4>
+                    @if (Model.PatientRisk != null)
+                    {
+                        <h4 class="@(Model.PatientRisk.RiskScore >= 5 ? "text-danger" : "text-warning")">
+                            @Model.PatientRisk.RiskStatus (Score: @Model.PatientRisk.RiskScore)
+                        </h4>
+                    }
+                    else
+                    {
+                        <h4>No Risk Data Available</h4>
+                    }
                 </div>
             </div>
         </div>

@@ -11,10 +11,24 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
     {
         var patient = context.Patients
             .Include(p => p.Vitals)
+            .Include(p => p.PatientRisk)
             .FirstOrDefault(p => p.Id == id);
         if (patient == null) return NotFound();
 
         logger.LogInformation("Accessing record for: {PatientFirstName} {PatientLastName}, SSN: {PatientSocialSecurityNumber}", patient.FirstName, patient.LastName, patient.SocialSecurityNumber);
+
+        UpdateRiskAssessment(patient);
+        context.SaveChanges();
+
+        // Fetch inventory data
+        ViewBag.Inventory = context.Inventory.ToList();
+
+        return View(patient);
+    }
+
+    private void UpdateRiskAssessment(Patient patient)
+    {
+        if (patient.Vitals == null) return;
 
         var riskScore = 0;
         var status = "Stable";
@@ -24,7 +38,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         if (patient.Vitals.SystolicBP < 100) riskScore += 2;
         if (patient.Vitals.Temperature > 38.0) riskScore += 1;
         if (patient.Vitals.Temperature > 40.0) riskScore += 3;
-        
+
         if (riskScore >= 5)
         {
             status = "CRITICAL - SEPSIS ALERT";
@@ -34,13 +48,13 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
             status = "Warning - Monitor Closely";
         }
 
-        ViewBag.RiskStatus = status;
-        ViewBag.RiskScore = riskScore;
+        if (patient.PatientRisk == null)
+        {
+            patient.PatientRisk = new PatientRisk();
+        }
 
-        // Fetch inventory data
-        ViewBag.Inventory = context.Inventory.ToList();
-
-        return View(patient);
+        patient.PatientRisk.RiskScore = riskScore;
+        patient.PatientRisk.RiskStatus = status;
     }
 
     // POST: Patient/DispenseMedication
@@ -64,6 +78,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
             {
                 var patient = context.Patients
                     .Include(p => p.Vitals)
+                    .Include(p => p.PatientRisk)
                     .FirstOrDefault(p => p.Id == patientId);
 
                 if (patient?.Vitals != null)
@@ -72,7 +87,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
                     patient.Vitals.HeartRate = (int)Math.Round(patient.Vitals.HeartRate * 1.004);
                     patient.Vitals.Temperature = Math.Round(patient.Vitals.Temperature * 1.005, 2);
 
-              
+                    UpdateRiskAssessment(patient);
                 }
             }
             
