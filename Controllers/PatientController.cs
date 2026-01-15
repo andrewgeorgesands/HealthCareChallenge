@@ -23,9 +23,16 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         if (patient.Vitals.HeartRate > 110) riskScore += 3; // Severe
         if (patient.Vitals.SystolicBP < 100) riskScore += 2;
         if (patient.Vitals.Temperature > 38.0) riskScore += 1;
-
-        if (riskScore >= 5) status = "CRITICAL - SEPSIS ALERT";
-        else if (riskScore >= 3) status = "Warning - Monitor Closely";
+        if (patient.Vitals.Temperature > 40.0) riskScore += 3;
+        
+        if (riskScore >= 5)
+        {
+            status = "CRITICAL - SEPSIS ALERT";
+        }
+        else if (riskScore >= 3)
+        {
+            status = "Warning - Monitor Closely";
+        }
 
         ViewBag.RiskStatus = status;
         ViewBag.RiskScore = riskScore;
@@ -52,6 +59,22 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
                 InventoryId = inventoryId,
                 DispensedAt = DateTime.UtcNow
             });
+
+            if (meds.DrugName.Contains("Morphine", StringComparison.OrdinalIgnoreCase))
+            {
+                var patient = context.Patients
+                    .Include(p => p.Vitals)
+                    .FirstOrDefault(p => p.Id == patientId);
+
+                if (patient?.Vitals != null)
+                {
+                    patient.Vitals.SystolicBP = (int)Math.Round(patient.Vitals.SystolicBP * 0.934);
+                    patient.Vitals.HeartRate = (int)Math.Round(patient.Vitals.HeartRate * 1.004);
+                    patient.Vitals.Temperature = Math.Round(patient.Vitals.Temperature * 1.005, 2);
+
+              
+                }
+            }
             
             context.SaveChanges();
 
