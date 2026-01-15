@@ -47,11 +47,13 @@ public class HomeController(AppDbContext context, ILogger<HomeController> logger
         return RedirectToAction(nameof(Index));
     }
 
+    [AllowAnonymous]
     public IActionResult Privacy()
     {
         return View();
     }
 
+    [AllowAnonymous]
     public IActionResult Login()
     {
         return Challenge(new AuthenticationProperties { RedirectUri = "/" }, OpenIdConnectDefaults.AuthenticationScheme);

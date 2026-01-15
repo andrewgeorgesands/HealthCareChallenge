@@ -1,4 +1,5 @@
 using HealthCareChallenge.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +60,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
 
     // POST: Patient/DispenseMedication
     [HttpPost]
+    [Authorize]
     public IActionResult DispenseMedication(int patientId, int inventoryId)
     {
         var meds = context.Inventory.Find(inventoryId);
@@ -105,6 +107,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
 
     // POST: Patient/Delete/5
     [HttpPost]
+    [Authorize]
     public IActionResult Delete(int id)
     {
         var patient = context.Patients.Find(id);
@@ -117,6 +120,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
     }
 
     // GET: Patient/AllVitals
+    [Authorize]
     public IActionResult AllVitals()
     {
         var vitals = context.Vitals.ToList();
@@ -128,6 +132,7 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
     }
 
     // GET: Patient/DispensedHistory
+    [Authorize]
     public IActionResult DispensedHistory()
     {
         var history = context.DispensedMedications
