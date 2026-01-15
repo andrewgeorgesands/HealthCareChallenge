@@ -7,8 +7,7 @@ public class Patient
     public string LastName { get; set; }
         
     public string SocialSecurityNumber { get; set; } 
-        
-    public int HeartRate { get; set; } // BPM
-    public int SystolicBP { get; set; } // Blood Pressure
-    public double Temperature { get; set; } // Celsius
+    
+    public int VitalsId { get; set; }
+    public Vitals Vitals { get; set; }
 }

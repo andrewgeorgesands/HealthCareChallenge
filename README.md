@@ -11,9 +11,10 @@ The production environment is https://vismaflythealthcarechallenge.azurewebsites
 3. **Authentication** Reach out to developer Andrew Sands to get creds for Visma Connect. Contact details are in the code.
 4. **Authentication 2** Log in with Visma Connect.  You can use the "Create account" link to self-service a new account
 5. **Race condition** Find and fix the race condition left behind by the previous developer
-6. **Security** Find the rather big security whoopsie.
-7. **Refactoring** Refactor the Vitals index action method to separate the logic for fetching vitals from the logic for rendering the view
-8. **Test** Add a unit test that shows the race condition is fixed by your changes
+6. **Orphan record** Find and fix the hard delete bug that leaves orphaned records in the database.
+7. **Security** Find the rather big security whoopsie.
+8. **Refactoring** Refactor the Vitals index action method to separate the logic for fetching vitals from the logic for rendering the view
+9. **Test** Add a unit test that shows the race condition is fixed by your changes
 
 # Artifacts
 1. Make your code changes as a pull request so we can review it
