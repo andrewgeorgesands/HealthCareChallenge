@@ -4,7 +4,20 @@
 }
 
 <div class="container">
-    <h1 class="display-4">Patient List</h1>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="display-4">Patient List</h1>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-action="ResetPatients" method="post">
+                <button type="submit" class="btn btn-danger">Reset Patients</button>
+            </form>
+        }
+    </div>
     
     @if (User.Identity?.IsAuthenticated == true)
     {
@@ -24,6 +37,9 @@
                         <td>@patient.LastName</td>
                         <td>
                             <a asp-controller="Patient" asp-action="Vitals" asp-route-id="@patient.Id" class="btn btn-primary">View Vitals</a>
+                            <form asp-controller="Patient" asp-action="Delete" asp-route-id="@patient.Id" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this patient?');">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 }

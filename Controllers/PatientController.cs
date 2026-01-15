@@ -1,5 +1,6 @@
 using HealthCareChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthCareChallenge.Controllers;
 
@@ -8,7 +9,9 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
     // GET: Patient/Vitals/5
     public IActionResult Vitals(int id)
     {
-        var patient = context.Patients.Find(id);
+        var patient = context.Patients
+            .Include(p => p.Vitals)
+            .FirstOrDefault(p => p.Id == id);
         if (patient == null) return NotFound();
 
         logger.LogInformation("Accessing record for: {PatientFirstName} {PatientLastName}, SSN: {PatientSocialSecurityNumber}", patient.FirstName, patient.LastName, patient.SocialSecurityNumber);
@@ -16,10 +19,10 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         var riskScore = 0;
         var status = "Stable";
 
-        if (patient.HeartRate > 90) riskScore += 1;
-        if (patient.HeartRate > 110) riskScore += 3; // Severe
-        if (patient.SystolicBP < 100) riskScore += 2;
-        if (patient.Temperature > 38.0) riskScore += 1;
+        if (patient.Vitals.HeartRate > 90) riskScore += 1;
+        if (patient.Vitals.HeartRate > 110) riskScore += 3; // Severe
+        if (patient.Vitals.SystolicBP < 100) riskScore += 2;
+        if (patient.Vitals.Temperature > 38.0) riskScore += 1;
 
         if (riskScore >= 5) status = "CRITICAL - SEPSIS ALERT";
         else if (riskScore >= 3) status = "Warning - Monitor Closely";
@@ -41,9 +44,6 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
 
         if (meds is { QuantityInStock: > 0 })
         {
-            // Simulate a network delay in medication delivery
-            Thread.Sleep(2000);
-
             meds.QuantityInStock--;
             context.SaveChanges();
 
@@ -55,5 +55,29 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         }
 
         return RedirectToAction(nameof(Vitals), new { id = patientId });
+    }
+
+    // POST: Patient/Delete/5
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        var patient = context.Patients.Find(id);
+        if (patient == null) return NotFound();
+
+        context.Patients.Remove(patient);
+        context.SaveChanges();
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    // GET: Patient/AllVitals
+    public IActionResult AllVitals()
+    {
+        var vitals = context.Vitals.ToList();
+        var patientVitalsIds = context.Patients.Select(p => p.VitalsId).ToList();
+
+        ViewBag.PatientVitalsIds = patientVitalsIds;
+
+        return View(vitals);
     }
 }

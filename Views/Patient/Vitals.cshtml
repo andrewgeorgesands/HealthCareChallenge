@@ -31,9 +31,9 @@
                     <h4>Current Vitals</h4>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Heart Rate: <strong>@Model.HeartRate bpm</strong></li>
-                    <li class="list-group-item">Systolic BP: <strong>@Model.SystolicBP mmHg</strong></li>
-                    <li class="list-group-item">Temp: <strong>@Model.Temperature °C</strong></li>
+                    <li class="list-group-item">Heart Rate: <strong>@Model.Vitals.HeartRate bpm</strong></li>
+                    <li class="list-group-item">Systolic BP: <strong>@Model.Vitals.SystolicBP mmHg</strong></li>
+                    <li class="list-group-item">Temp: <strong>@Model.Vitals.Temperature °C</strong></li>
                 </ul>
                 <div class="card-footer">
                     <h5>Calculated Status:</h5>
@@ -73,10 +73,6 @@
                     {
                         <p>No medications available in inventory.</p>
                     }
-                    
-                    <small class="text-muted d-block mt-2">
-                        *Simulates 2s network latency on click
-                    </small>
                 </div>
             </div>
         </div>

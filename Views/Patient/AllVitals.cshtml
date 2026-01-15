@@ -1,0 +1,41 @@
+@model IEnumerable<HealthCareChallenge.Models.Vitals>
+@{
+    ViewData["Title"] = "All Vitals";
+    var patientVitalsIds = (List<int>)ViewBag.PatientVitalsIds;
+}
+
+<div class="container mt-4">
+    <h1 class="display-4">All Vitals</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Heart Rate (BPM)</th>
+                <th>Systolic BP (mmHg)</th>
+                <th>Temperature (°C)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vital in Model)
+            {
+                var isOrphan = !patientVitalsIds.Contains(vital.Id);
+                <tr>
+                    <td>@vital.HeartRate</td>
+                    <td>@vital.SystolicBP</td>
+                    <td>@vital.Temperature</td>
+                    <td>
+                        @if (isOrphan)
+                        {
+                            <span class="badge bg-warning text-dark">Orphan</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Linked</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
