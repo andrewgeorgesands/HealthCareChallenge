@@ -45,6 +45,14 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         if (meds is { QuantityInStock: > 0 })
         {
             meds.QuantityInStock--;
+            
+            context.DispensedMedications.Add(new DispensedMedication
+            {
+                PatientId = patientId,
+                InventoryId = inventoryId,
+                DispensedAt = DateTime.UtcNow
+            });
+            
             context.SaveChanges();
 
             TempData["Message"] = $"Medication {meds.DrugName} Dispensed";
@@ -79,5 +87,20 @@ public class PatientController(AppDbContext context, ILogger<PatientController> 
         ViewBag.PatientVitalsIds = patientVitalsIds;
 
         return View(vitals);
+    }
+
+    // GET: Patient/DispensedHistory
+    public IActionResult DispensedHistory()
+    {
+        var history = context.DispensedMedications
+            .OrderByDescending(d => d.DispensedAt)
+            .ToList();
+
+        // Simple way to get names for display without full joins for now, 
+        // given the challenge context
+        ViewBag.Patients = context.Patients.ToDictionary(p => p.Id, p => $"{p.FirstName} {p.LastName}");
+        ViewBag.Inventory = context.Inventory.ToDictionary(i => i.Id, i => i.DrugName);
+
+        return View(history);
     }
 }
