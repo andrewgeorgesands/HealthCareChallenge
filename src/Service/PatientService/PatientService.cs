@@ -41,11 +41,14 @@ public class PatientService(AppDbContext context) : IPatientService
     {
         if (patient.Vitals == null) return;
 
-        patient.Vitals.SystolicBP = (int)Math.Round(patient.Vitals.SystolicBP * 0.934);
-        patient.Vitals.HeartRate = (int)Math.Round(patient.Vitals.HeartRate * 1.004);
-        patient.Vitals.Temperature = Math.Round(patient.Vitals.Temperature * 1.005, 2);
-
-        var risk = CalculateRiskAssessment(patient.Vitals); ;
+        // Project vitals WITHOUT mutating the original (fixes idempotency issue)
+        var projectedVitals = new Vitals
+        {
+            HeartRate = (int)Math.Round(patient.Vitals.HeartRate * 1.004),
+            SystolicBP = (int)Math.Round(patient.Vitals.SystolicBP * 0.934),
+            Temperature = Math.Round(patient.Vitals.Temperature * 1.005, 2)
+        };
+        var risk = CalculateRiskAssessment(projectedVitals);
 
         if (patient.PatientRisk == null)
         {

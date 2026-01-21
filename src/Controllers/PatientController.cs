@@ -26,7 +26,7 @@ public class PatientController(IPatientService patientService, AppDbContext cont
 
 
     // POST: Patient/DispenseMedication
-    //RACE CONDITION: Check (QuantityInStock > 0) and Act (decrement) are not atomic.
+    // RACE CONDITION: Check (QuantityInStock > 0) and Act (decrement) are not atomic.
     // Two concurrent requests can both pass the check, both decrement, resulting in negative inventory.
     [HttpPost]
     public IActionResult DispenseMedication(int patientId, int inventoryId)
